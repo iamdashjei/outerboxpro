@@ -3,9 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use jeremykenedy\LaravelBlocker\App\Models\BlockedType;
 
-class CreateLaravelBlockerTypesTable extends Migration
+class CreateRoleUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,16 +13,17 @@ class CreateLaravelBlockerTypesTable extends Migration
      */
     public function up()
     {
-        $blocked = new BlockedType();
-        $connection = $blocked->getConnectionName();
-        $table = $blocked->getTableName();
+        $connection = config('roles.connection');
+        $table = config('roles.roleUserTable');
         $tableCheck = Schema::connection($connection)->hasTable($table);
 
         if (!$tableCheck) {
             Schema::connection($connection)->create($table, function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('slug')->unique();
-                $table->string('name');
+                $table->increments('id')->unsigned();
+                $table->integer('role_id')->unsigned()->index();
+                $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+                $table->unsignedBigInteger('user_id')->unsigned()->index();
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
                 $table->timestamps();
                 $table->softDeletes();
             });
@@ -37,10 +37,8 @@ class CreateLaravelBlockerTypesTable extends Migration
      */
     public function down()
     {
-        $blockedType = new BlockedType();
-        $connection = $blockedType->getConnectionName();
-        $table = $blockedType->getTableName();
-
+        $connection = config('roles.connection');
+        $table = config('roles.roleUserTable');
         Schema::connection($connection)->dropIfExists($table);
     }
 }
