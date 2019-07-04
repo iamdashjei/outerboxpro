@@ -82,10 +82,7 @@
             @endif
             <div class="content">
                 <div class="title m-b-md">
-                    Outerbox<br />
-                    <!-- <small>
-                        {{ trans('titles.app2', ['version' => config('settings.app_project_version')]) }}
-                    </small> -->
+                    Outerbox
                 </div>
                 
             </div>
